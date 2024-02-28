@@ -27,11 +27,13 @@ router.post('/register', async (req, resp) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: hashedPassword,
-        role: req.body.role
+        role: req.body.role,
+        passwordReset: true
     });
     
     try {
-        const saveUser = await user.save();
+        // const saveUser = await user.save();
+        await user.save();
         resp.status(200).send({ user: user._id });
     } catch (error) {
         resp.status(400).send(error);
@@ -39,18 +41,18 @@ router.post('/register', async (req, resp) => {
 });
 
 // GET ALL USERS BY STATUS
-router.get('/status/:active', async (req, res) => {
+router.get('/status/:active', async (req, resp) => {
     let active = false;
     if (req.params.active === 'active') {
         active = true;
     } else if (req.params.active === 'inactive') { 
         active = false;
     } else {
-        return res.status(400).json({ message: 'invalid parameter' });
+        return resp.status(400).json({ message: 'invalid parameter' });
     } 
 
     const users = await User.find({ active: active }).select("-pass");
-    return res.status(200).json(users);
+    return resp.status(200).json(users);
 });
 
 // GET USER BY ID
@@ -63,29 +65,73 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// LOGIN
-// router.post('/login', async (req, resp) => {
-//     // Validate DATA before to be send
-//     const { error } = loginValidation(req.body);
-//     if (error) {
-//         return resp.status(400).send(error.details[0].message);
-//     }
+// ENABLE - DISABLE A USER
+router.put('/activate/:id', async (req, resp) => {
+    try {
+        const updateUser = await User.updateOne(
+            {_id: req.params.id},
+            {$set: 
+                {
+                    active: req.body.active,
+                }
+            }
+        );
 
-//     // Checking if the user exists in the DB
-//     const user = await User.findOne({ email: req.body.email });
-//     if (!user) {
-//         return resp.status(401).send('Email or Password Incorrect');
-//     }
+        resp.status(200).json(updateUser);
+    }catch(err){
+        console.log(err);
+        resp.status(500).json({message: err});
+    } 
+});
 
-//     // Validate Password
-//     const validPassword = await bcrypt.compare(req.body.password, user.password);
+// UPDATE A USER
+router.patch('/:id', async (req, resp) => {
+    // VALIDATE DATA BEFORE CREATE A USER
+    const { error } = registerValidation(req.body);
+    if (error) {
+        return resp.status(400).send(error.details[0].message);
+    }
 
-//     if (!validPassword) {
-//         return resp.status(401).send('Email or Password Incorrect');
-//     }
+    try {
+        // Validate if User can update and the email doesnt exists for another user
+        const user = await User.findOne({ email: req.body.email });
+        if (user) {
+            if (user._id.valueOf() !== req.params.id) {
+                return resp.status(400).send('User already exists.');
+            }  
+        }
 
-//     const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
-//     resp.header('auth-token', token).send(token);
-// });
+        // BEFORE UPDATE PASSWORD .. VALIDATING OLD PASS AND UPDATE WITH NEW ONE
+        // Validate Password
+        const validPassword = await bcrypt.compare(req.body.oldPassword, user.password);
+
+        if (!validPassword) {
+            return resp.status(401).send('Incorrect Old Password');
+        }
+
+        const obj = {
+            email: req.body.email,
+            name: req.body.name,
+            lastName: req.body.lastName,
+            role: req.body.role,
+            active: req.body.active,
+            passReset: req.body.passReset
+        }
+        if (req.body.password != null) {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            obj.password = hashedPassword;
+        }
+        
+        const updateUser = await User.updateOne(
+            { _id: req.params.id },
+            { $set: obj }
+        );
+
+        return resp.status(200).json(updateUser);
+    }catch(err){
+        console.log(err);
+        return resp.status(500).json({message: err});
+    } 
+});
 
 module.exports = router;
