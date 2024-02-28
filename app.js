@@ -11,11 +11,14 @@ app.use(bodyParser.json());
 
 // IMPORT ROUTES
 const postsRoute = require('./routes/posts');
-const authRoute = require('./routes/user');
+const userRoute = require('./routes/user');
+const authRoute = require('./routes/auth');
+const authenticateToken = require('./routes/verifyToken');
 
 // ROUTE MIDDLEWARES
-app.use('/posts', postsRoute);
-app.use('/api/user', authRoute);
+app.use('/api/usr', authRoute);
+app.use('/posts', authenticateToken, postsRoute);
+app.use('/api/user', authenticateToken, userRoute);
 
 app.get('/', (req, res) => {
     res.send('We are on home');

@@ -40,28 +40,28 @@ router.post('/register', async (req, resp) => {
 });
 
 // LOGIN
-router.post('/login', async (req, resp) => {
-    // Validate DATA before to be send
-    const { error } = loginValidation(req.body);
-    if (error) {
-        return resp.status(400).send(error.details[0].message);
-    }
+// router.post('/login', async (req, resp) => {
+//     // Validate DATA before to be send
+//     const { error } = loginValidation(req.body);
+//     if (error) {
+//         return resp.status(400).send(error.details[0].message);
+//     }
 
-    // Checking if the user exists in the DB
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-        return resp.status(401).send('Email or Password Incorrect');
-    }
+//     // Checking if the user exists in the DB
+//     const user = await User.findOne({ email: req.body.email });
+//     if (!user) {
+//         return resp.status(401).send('Email or Password Incorrect');
+//     }
 
-    // Validate Password
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
+//     // Validate Password
+//     const validPassword = await bcrypt.compare(req.body.password, user.password);
 
-    if (!validPassword) {
-        return resp.status(401).send('Email or Password Incorrect');
-    }
+//     if (!validPassword) {
+//         return resp.status(401).send('Email or Password Incorrect');
+//     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
-    resp.header('auth-token', token).send(token);
-});
+//     const token = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+//     resp.header('auth-token', token).send(token);
+// });
 
 module.exports = router;
