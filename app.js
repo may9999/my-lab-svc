@@ -9,17 +9,14 @@ const cors = require('cors');
 app.use(cors());
 app.use(bodyParser.json());
 
-
-// app.use('/post', () => {
-//     console.log('This is a middleware running');
-// });
-
 // IMPORT ROUTES
 const postsRoute = require('./routes/posts');
+const authRoute = require('./routes/user');
 
+// ROUTE MIDDLEWARES
 app.use('/posts', postsRoute);
+app.use('/api/user', authRoute);
 
-// ROUTES
 app.get('/', (req, res) => {
     res.send('We are on home');
 });
@@ -37,14 +34,6 @@ mongoose.connect(process.env.MONGODB_URI, {
     err => {
         console.log(err);
 });
-
-// app.get('/getUsers', (req, res) => {
-//     userModel.find({}).then(function(users) {
-//         res.json(users);
-//     }).catch(function(err) {
-//         console.log(err);
-//     });
-// });
     
 // How to we start listening to the server
 app.listen(3000);
