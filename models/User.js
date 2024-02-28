@@ -20,7 +20,7 @@ const UsersSchema = mongoose.Schema({
         // max: 255,
         min: 6
     },
-    type: { // admin/technical/manager/user/customer
+    role: { // ADMIN/TECHNICAL/MANAGER/USER/CUSTOMER
         type: String,
         require: true
     }, 
