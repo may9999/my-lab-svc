@@ -32,10 +32,34 @@ router.post('/register', async (req, resp) => {
     
     try {
         const saveUser = await user.save();
-        resp.send({ user: user._id });
+        resp.status(200).send({ user: user._id });
     } catch (error) {
         resp.status(400).send(error);
     }
+});
+
+// LOGIN
+router.post('/login', async (req, resp) => {
+    // Validate DATA before to be send
+    const { error } = loginValidation(req.body);
+    if (error) {
+        return resp.status(400).send(error.details[0].message);
+    }
+
+    // Checking if the user exists in the DB
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return resp.status(401).send('Email or Password Incorrect');
+    }
+
+    // Validate Password
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+
+    if (!validPassword) {
+        return resp.status(401).send('Email or Password Incorrect');
+    }
+
+    return resp.status(200).send('Logged In!');
 });
 
 module.exports = router;
