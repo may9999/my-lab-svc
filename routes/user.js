@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { registerValidation, loginValidation } = require('../validation');
 
@@ -36,6 +35,31 @@ router.post('/register', async (req, resp) => {
         resp.status(200).send({ user: user._id });
     } catch (error) {
         resp.status(400).send(error);
+    }
+});
+
+// GET ALL USERS BY STATUS
+router.get('/status/:active', async (req, res) => {
+    let active = false;
+    if (req.params.active === 'active') {
+        active = true;
+    } else if (req.params.active === 'inactive') { 
+        active = false;
+    } else {
+        return res.status(400).json({ message: 'invalid parameter' });
+    } 
+
+    const users = await User.find({ active: active }).select("-pass");
+    return res.status(200).json(users);
+});
+
+// GET USER BY ID
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("-pass");
+        return res.status(200).json(user);
+    } catch(err) {
+        res.json({ message: 'Invalid ID' });
     }
 });
 
