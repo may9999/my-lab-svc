@@ -90,7 +90,7 @@ router.post('/token', (req, res) => {
         const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
         return res.json({ accessToken: accessToken });
     });
-});
+}); 
 // router.post('/token', (req, res) => { 
 //     const refreshToken = req.body.token;
 //     if (refreshToken == null) {
