@@ -71,7 +71,27 @@ router.post('/login', async (req, resp) => {
 //     });
 // });
 
-// router.post('/token', (req, res) => { // for refreshing token
+// FOR REFRESHING TOKEN
+router.post('/token', (req, res) => { 
+    const refreshToken = req.headers['authorization'];
+    if (refreshToken == null) {
+        return res.status(401).send('Invalid Token'); // NO TOKEN
+    }
+    if (!refreshTokens.includes(refreshToken)) {
+        return res.status(403).send('Invalid Token'); // NO TOKEN
+    }
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).send('Access Denied'); // NO TOKEN
+        }
+
+        // const accessToken = generateAccessToken({ name: user.name });
+        refreshTokens = refreshTokens.filter(token => token == refreshToken);
+        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
+        return res.json({ accessToken: accessToken });
+    });
+});
+// router.post('/token', (req, res) => { 
 //     const refreshToken = req.body.token;
 //     if (refreshToken == null) {
 //         return res.status(401).send('Invalid Token'); // NO TOKEN
