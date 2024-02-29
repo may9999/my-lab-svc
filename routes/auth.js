@@ -95,10 +95,10 @@ function generateAccessToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '120s'});
 }
 
-// router.post('/logout', (req, res, next) => {
-//     refreshTokens = refreshTokens.filter(token => token !== req.body.token);
-//     res.status(204).json({});
-//     next();
-// });  
+router.post('/logout', (req, res, next) => {
+    refreshTokens = refreshTokens.filter(token => token == req.headers['authorization']);
+    res.status(204).json({});
+    next();
+});  
 
 module.exports = router;
