@@ -91,6 +91,7 @@ router.post('/token', (req, res) => {
         return res.json({ accessToken: accessToken });
     });
 }); 
+// this is a test
 // router.post('/token', (req, res) => { 
 //     const refreshToken = req.body.token;
 //     if (refreshToken == null) {
