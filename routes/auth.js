@@ -84,8 +84,6 @@ router.post('/token', (req, res) => {
         if (err) {
             return res.status(403).send('Access Denied'); // NO TOKEN
         }
-
-        // const accessToken = generateAccessToken({ name: user.name });
         refreshTokens = refreshTokens.filter(token => token == refreshToken);
         const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
         return res.json({ accessToken: accessToken });
