@@ -51,14 +51,14 @@ router.get('/status/:active', async (req, resp) => {
         return resp.status(400).json({ message: 'invalid parameter' });
     } 
 
-    const users = await User.find({ active: active }).select("-pass");
+    const users = await User.find({ active: active }).select("-password");
     return resp.status(200).json(users);
 });
 
 // GET USER BY ID
 router.get('/:id', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).select("-pass");
+        const user = await User.findById(req.params.id).select("-password");
         return res.status(200).json(user);
     } catch(err) {
         res.json({ message: 'Invalid ID' });
