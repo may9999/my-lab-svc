@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { loginValidation } = require('../validation');
 
-let refreshTokens = []; // TODO: find another way to store the tokens (redis cache)
+// let refreshTokens = []; // TODO: find another way to store the tokens (redis cache)
+// refreshTokens IS DEFINED AS GLOBAL IN app.js
 
 // LOGIN
 router.post('/login', async (req, resp) => {
@@ -86,6 +87,7 @@ router.post('/token', (req, res) => {
         }
         refreshTokens = refreshTokens.filter(token => token == refreshToken);
         const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
+        refreshTokens.push(accessToken);
         return res.json({ accessToken: accessToken });
     });
 }); 

@@ -4,6 +4,12 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+global.refreshTokens = [];
+
+// var express = require('express')
+//   , stylus = require('stylus')
+//   , redis = require('redis') 
+//   , http = require('http');
 
 // MIDDLEWARES
 app.use(cors());
@@ -18,12 +24,11 @@ const authenticateToken = require('./routes/verifyToken');
 // ROUTE MIDDLEWARES
 app.use('/api/usr', authRoute);
 app.use('/posts', authenticateToken, postsRoute);
-app.use('/api/user', /*authenticateToken,*/ userRoute);
+app.use('/api/user', authenticateToken, userRoute);
 
 app.get('/', (req, res) => {
     res.send('We are on home');
 });
-
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
