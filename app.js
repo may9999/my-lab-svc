@@ -24,7 +24,7 @@ const authenticateToken = require('./routes/verifyToken');
 // ROUTE MIDDLEWARES
 app.use('/api/usr', authRoute);
 app.use('/posts', authenticateToken, postsRoute);
-app.use('/api/user', authenticateToken, userRoute);
+app.use('/api/users', authenticateToken, userRoute);
 
 app.get('/', (req, res) => {
     res.send('We are on home');

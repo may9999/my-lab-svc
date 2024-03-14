@@ -26,12 +26,12 @@ const UsersSchema = mongoose.Schema({
     }, 
     active: {
         type: Boolean,
-        require: true,
+        require: false,
         default: true
     },
     passReset: {
         type: Boolean,
-        require: true,
+        require: false,
         default: true
     }, 
     creationDate: {

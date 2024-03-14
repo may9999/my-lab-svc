@@ -4,7 +4,6 @@ const bcrypt = require('bcryptjs');
 const { registerValidation, loginValidation } = require('../validation');
 
 router.post('/register', async (req, resp) => {
-
     // Validate DATA before to be inserted in the DB
     const { error } = registerValidation(req.body);
     if (error) {
@@ -28,7 +27,8 @@ router.post('/register', async (req, resp) => {
         email: req.body.email,
         password: hashedPassword,
         role: req.body.role,
-        passwordReset: true
+        passwordReset: true,
+        active: true
     });
     
     try {
@@ -41,11 +41,12 @@ router.post('/register', async (req, resp) => {
 });
 
 // GET ALL USERS BY STATUS
-router.get('/status/:active', async (req, resp) => {
+router.get('', async (req, resp) => {
+// router.get('/status/:active', async (req, resp) => {    
     let active = false;
-    if (req.params.active === 'active') {
+    if (req.query.status === 'active') {
         active = true;
-    } else if (req.params.active === 'inactive') { 
+    } else if (req.query.status === 'inactive') { 
         active = false;
     } else {
         return resp.status(400).json({ message: 'invalid parameter' });
