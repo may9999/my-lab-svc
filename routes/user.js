@@ -2,8 +2,27 @@ const router = require('express').Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const { registerValidation, loginValidation } = require('../validation');
+const { boolean } = require('@hapi/joi');
 
 router.post('/register', async (req, resp) => {
+    const currentUser = req.headers['current-user'];
+    isAdmin = false;
+
+    ///////////THIS BLOCQ MUST BE REUSABLE
+    try {
+        const user = await User.findById(currentUser).select("-password");
+        isAdmin = user.role === 'ADMIN' ? true : false;
+    } catch(err) {
+        return resp.json({ message: 'Invalid ID' });
+    }
+
+    if (!isAdmin) {
+        return resp.status(401).json({ message: 'Insuficientes Privilegios' });
+    }
+    ///////////// FIN THIS BLOCQ MUST BE REUSABLE
+    
+    
+
     // Validate DATA before to be inserted in the DB
     const { error } = registerValidation(req.body);
     if (error) {
@@ -42,7 +61,6 @@ router.post('/register', async (req, resp) => {
 
 // GET ALL USERS BY STATUS
 router.get('', async (req, resp) => {
-// router.get('/status/:active', async (req, resp) => {    
     let active = false;
     if (req.query.status === 'active') {
         active = true;
@@ -57,18 +75,34 @@ router.get('', async (req, resp) => {
 });
 
 // GET USER BY ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, resp) => {
     try {
         const user = await User.findById(req.params.id).select("-password");
-        return res.status(200).json(user);
+        return resp.status(200).json(user);
     } catch(err) {
-        res.json({ message: 'Invalid ID' });
+        resp.json({ message: 'Invalid ID' });
     }
 });
 
 // ENABLE - DISABLE A USER
 router.put('/activate/:id', async (req, resp) => {
     try {
+        const currentUser = req.headers['current-user'];
+        isAdmin = false;
+
+        ///////////THIS BLOCQ MUST BE REUSABLE
+        try {
+            const user = await User.findById(currentUser).select("-password");
+            isAdmin = user.role === 'ADMIN' ? true : false;
+        } catch(err) {
+            return resp.json({ message: 'Invalid ID' });
+        }
+
+        if (!isAdmin) {
+            return resp.status(401).json({ message: 'Insuficientes Privilegios' });
+        }
+        ///////////// FIN THIS BLOCQ MUST BE REUSABLE
+
         const updateUser = await User.updateOne(
             {_id: req.params.id},
             {$set: 
@@ -87,6 +121,23 @@ router.put('/activate/:id', async (req, resp) => {
 
 // UPDATE A USER
 router.patch('/:id', async (req, resp) => {
+    const currentUser = req.headers['current-user'];
+    isAdmin = false;
+
+    ///////////THIS BLOCQ MUST BE REUSABLE
+    try {
+        const user = await User.findById(currentUser).select("-password");
+        isAdmin = user.role === 'ADMIN' ? true : false;
+    } catch(err) {
+        return resp.json({ message: 'Invalid ID' });
+    }
+
+    if (!isAdmin) {
+        return resp.status(401).json({ message: 'Insuficientes Privilegios' });
+    }
+    ///////////// FIN THIS BLOCQ MUST BE REUSABLE
+
+
     // VALIDATE DATA BEFORE CREATE A USER
     const { error } = registerValidation(req.body);
     if (error) {
