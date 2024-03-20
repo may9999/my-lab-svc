@@ -26,13 +26,13 @@ router.post('/register', async (req, resp) => {
     // Validate DATA before to be inserted in the DB
     const { error } = registerValidation(req.body);
     if (error) {
-        return resp.status(400).send(error.details[0].message);
+        return resp.status(400).send({ message: error.details[0].message });
     }
 
     // Checking if the user is already in the DB
     const emailExist = await User.findOne({ email: req.body.email });
     if (emailExist) {
-        return resp.status(400).send('Email already exists')
+        return resp.status(400).send({ message: 'Email already exists' })
     }
 
     // Hash password
@@ -55,7 +55,7 @@ router.post('/register', async (req, resp) => {
         await user.save();
         resp.status(200).send({ user: user._id });
     } catch (error) {
-        resp.status(400).send(error);
+        resp.status(400).send({ message: error });
     }
 });
 
@@ -115,14 +115,17 @@ router.put('/activate/:id', async (req, resp) => {
         resp.status(200).json(updateUser);
     }catch(err){
         console.log(err);
-        resp.status(500).json({message: err});
+        resp.status(500).json({ message: err });
     } 
 });
 
 // UPDATE A USER
+// Only admins can update users.. in future is we want 
+// users can modify his own user then we have change the logic
 router.patch('/:id', async (req, resp) => {
     const currentUser = req.headers['current-user'];
     isAdmin = false;
+    isOwner = false;
 
     ///////////THIS BLOCQ MUST BE REUSABLE
     try {
@@ -133,7 +136,7 @@ router.patch('/:id', async (req, resp) => {
     }
 
     if (!isAdmin) {
-        return resp.status(401).json({ message: 'Insuficientes Privilegios' });
+        return resp.status(401).json({ message: 'Unauthorized' });
     }
     ///////////// FIN THIS BLOCQ MUST BE REUSABLE
 
@@ -141,7 +144,7 @@ router.patch('/:id', async (req, resp) => {
     // VALIDATE DATA BEFORE CREATE A USER
     const { error } = registerValidation(req.body);
     if (error) {
-        return resp.status(400).send(error.details[0].message);
+        return resp.status(400).send({ message: error.details[0].message });
     }
 
     try {
@@ -149,28 +152,30 @@ router.patch('/:id', async (req, resp) => {
         const user = await User.findOne({ email: req.body.email });
         if (user) {
             if (user._id.valueOf() !== req.params.id) {
-                return resp.status(400).send('User already exists.');
+                return resp.status(400).send({ message: 'User already exists.' });
             }  
         }
 
-        // BEFORE UPDATE PASSWORD .. VALIDATING OLD PASS AND UPDATE WITH NEW ONE
-        // Validate Password
-        const validPassword = await bcrypt.compare(req.body.oldPassword, user.password);
+        // // BEFORE UPDATE PASSWORD .. VALIDATING OLD PASS AND UPDATE WITH NEW ONE
+        // // Validate Password
+        // const validPassword = await bcrypt.compare(req.body.oldPassword, user.password);
 
-        if (!validPassword) {
-            return resp.status(401).send('Incorrect Old Password');
-        }
+        // if (!validPassword) {
+        //     return resp.status(401).send({ message: 'Incorrect Old Password' });
+        // }
 
         const obj = {
             email: req.body.email,
             name: req.body.name,
             lastName: req.body.lastName,
             role: req.body.role,
-            active: req.body.active,
+            active: true,
             passReset: req.body.passReset
         }
         if (req.body.password != null) {
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            // Hash password
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(req.body.password, salt);
             obj.password = hashedPassword;
         }
         
@@ -182,7 +187,7 @@ router.patch('/:id', async (req, resp) => {
         return resp.status(200).json(updateUser);
     }catch(err){
         console.log(err);
-        return resp.status(500).json({message: err});
+        return resp.status(500).json({ message: err });
     } 
 });
 
