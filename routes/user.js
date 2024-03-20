@@ -170,7 +170,7 @@ router.patch('/:id', async (req, resp) => {
             lastName: req.body.lastName,
             role: req.body.role,
             active: true,
-            passReset: req.body.passReset
+            passReset: true
         }
         if (req.body.password != null) {
             // Hash password
