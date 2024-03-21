@@ -125,7 +125,6 @@ router.put('/activate/:id', async (req, resp) => {
 router.patch('/:id', async (req, resp) => {
     const currentUser = req.headers['current-user'];
     isAdmin = false;
-    isOwner = false;
 
     ///////////THIS BLOCQ MUST BE REUSABLE
     try {
