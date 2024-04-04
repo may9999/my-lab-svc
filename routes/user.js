@@ -52,10 +52,16 @@ router.post('/register', async (req, resp) => {
         email: req.body.email,
         password: hashedPassword,
         role: req.body.role,
+        code: req.body.code,
+        address: req.body.address,
+        contactNumber: req.body.contactNumber,
+        neighborhood: req.body.neighborhood,
+        city: req.body.city,
+        zipCode: req.body.zipCode,
         passwordReset: true,
         active: true
     });
-    
+
     try {
         // const saveUser = await user.save();
         await user.save();
@@ -180,6 +186,12 @@ router.patch('/:id', async (req, resp) => {
             name: req.body.name,
             lastName: req.body.lastName,
             role: req.body.role,
+            code: req.body.code,
+            address: req.body.address,
+            contactNumber: req.body.contactNumber,
+            neighborhood: req.body.neighborhood,
+            city: req.body.city,
+            zipCode: req.body.zipCode,
             active: true,
             passReset: true
         }
