@@ -7,7 +7,7 @@ const UsersSchema = mongoose.Schema({
     },
     lastName: {
         type: String,
-        require: true
+        require: false
     },
     email: {
         type: String,
@@ -26,7 +26,7 @@ const UsersSchema = mongoose.Schema({
     },
     code: {
         type: String,
-        require: false
+        require: true
     },
     address: {
         type: String,

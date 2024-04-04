@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
-const { registerValidation, loginValidation } = require('../validation');
+const { registerUserValidation, registerClientValidation, loginValidation } = require('../validation');
 const { boolean } = require('@hapi/joi');
 
 router.post('/register', async (req, resp) => {
@@ -21,12 +21,18 @@ router.post('/register', async (req, resp) => {
     }
     ///////////// FIN THIS BLOCQ MUST BE REUSABLE
     
-    
 
     // Validate DATA before to be inserted in the DB
-    const { error } = registerValidation(req.body);
-    if (error) {
-        return resp.status(400).send({ message: error.details[0].message });
+    if (req.body.role === 'CLIENT') {
+        const { error } = registerClientValidation(req.body);
+        if (error) {
+            return resp.status(400).send({ message: error.details[0].message });
+        }
+    } else { // USER
+        const { error } = registerUserValidation(req.body);
+        if (error) {
+            return resp.status(400).send({ message: error.details[0].message });
+        }
     }
 
     // Checking if the user is already in the DB
@@ -139,11 +145,17 @@ router.patch('/:id', async (req, resp) => {
     }
     ///////////// FIN THIS BLOCQ MUST BE REUSABLE
 
-
-    // VALIDATE DATA BEFORE CREATE A USER
-    const { error } = registerValidation(req.body);
-    if (error) {
-        return resp.status(400).send({ message: error.details[0].message });
+    // Validate DATA before to be inserted in the DB
+    if (req.body.role === 'CLIENT') {
+        const { error } = registerClientValidation(req.body);
+        if (error) {
+            return resp.status(400).send({ message: error.details[0].message });
+        }
+    } else { // USER
+        const { error } = registerUserValidation(req.body);
+        if (error) {
+            return resp.status(400).send({ message: error.details[0].message });
+        }
     }
 
     try {
