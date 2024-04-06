@@ -73,16 +73,25 @@ router.post('/register', async (req, resp) => {
 
 // GET ALL USERS BY STATUS
 router.get('', async (req, resp) => {
-    let active = false;
-    if (req.query.status === 'active') {
-        active = true;
-    } else if (req.query.status === 'inactive') { 
-        active = false;
-    } else {
-        return resp.status(400).json({ message: 'invalid parameter' });
-    } 
+    let conditions = {};
+    let active = true;
+    if(req.query.hasOwnProperty('status')){
+        if (req.query.status === 'active') {
+            active = true;
+        } else if (req.query.status === 'inactive') { 
+            active = false;
+        } else {
+            return resp.status(400).json({ message: 'invalid parameter' });
+        } 
+    }
+    conditions.active = active;
 
-    const users = await User.find({ active: active }).select("-password");
+    if(req.query.hasOwnProperty('role')){
+        conditions.role = req.query.role;
+    }
+
+    // const users = await User.find({ active: active }).select("-password");
+    const users = await User.find(conditions).select("-password");
     return resp.status(200).json(users);
 });
 
