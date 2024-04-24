@@ -81,40 +81,40 @@ router.get('', async (req, resp) => {
 //     }
 // });
 
-// // ENABLE - DISABLE A USER
-// router.put('/activate/:id', async (req, resp) => {
-//     try {
-//         const currentUser = req.headers['current-user'];
-//         isAdmin = false;
+// ENABLE - DISABLE A CLINICAL STUDY
+router.put('/activate/:id', async (req, resp) => {
+    try {
+        const currentUser = req.headers['current-user'];
+        isAdmin = false;
 
-//         ///////////THIS BLOCQ MUST BE REUSABLE
-//         try {
-//             const user = await User.findById(currentUser).select("-password");
-//             isAdmin = user.role === 'ADMIN' ? true : false;
-//         } catch(err) {
-//             return resp.json({ message: 'Invalid ID' });
-//         }
+        ///////////THIS BLOCQ MUST BE REUSABLE
+        try {
+            const user = await User.findById(currentUser).select("-password");
+            isAdmin = user.role === 'ADMIN' ? true : false;
+        } catch(err) {
+            return resp.json({ message: 'Invalid ID' });
+        }
 
-//         if (!isAdmin) {
-//             return resp.status(401).json({ message: 'Insuficientes Privilegios' });
-//         }
-//         ///////////// FIN THIS BLOCQ MUST BE REUSABLE
+        if (!isAdmin) {
+            return resp.status(401).json({ message: 'Insuficientes Privilegios' });
+        }
+        ///////////// FIN THIS BLOCQ MUST BE REUSABLE
 
-//         const updateUser = await User.updateOne(
-//             {_id: req.params.id},
-//             {$set: 
-//                 {
-//                     active: req.body.active,
-//                 }
-//             }
-//         );
+        const update = await Studies.updateOne(
+            {_id: req.params.id},
+            {$set: 
+                {
+                    active: req.body.active,
+                }
+            }
+        );
 
-//         resp.status(200).json(updateUser);
-//     }catch(err){
-//         console.log(err);
-//         resp.status(500).json({ message: err });
-//     } 
-// });
+        resp.status(200).json(update);
+    }catch(err){
+        console.log(err);
+        resp.status(500).json({ message: err });
+    } 
+});
 
 // UPDATE A CLINICAL STUDY
 // Only admins can update
