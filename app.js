@@ -19,12 +19,14 @@ app.use(bodyParser.json());
 const postsRoute = require('./routes/posts');
 const userRoute = require('./routes/user');
 const authRoute = require('./routes/auth');
+const clinicalStudiesRoute = require('./routes/clinical-studies');
 const authenticateToken = require('./routes/verifyToken');
 
 // ROUTE MIDDLEWARES
 app.use('/api/usr', authRoute);
 app.use('/posts', authenticateToken, postsRoute);
 app.use('/api/users', authenticateToken, userRoute);
+app.use('/api/studies', authenticateToken, clinicalStudiesRoute);
 
 app.get('/', (req, res) => {
     res.send('We are on home');
