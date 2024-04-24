@@ -51,29 +51,25 @@ router.post('/', async (req, resp) => {
     }
 });
 
-// // GET ALL USERS BY STATUS
-// router.get('', async (req, resp) => {
-//     let conditions = {};
-//     let active = true;
-//     if(req.query.hasOwnProperty('status')){
-//         if (req.query.status === 'active') {
-//             active = true;
-//         } else if (req.query.status === 'inactive') { 
-//             active = false;
-//         } else {
-//             return resp.status(400).json({ message: 'invalid parameter' });
-//         } 
-//     }
-//     conditions.active = active;
+// GET ALL CLINICAL STUDIES BY STATUS
+router.get('', async (req, resp) => {
+    let conditions = {};
+    let active = true;
+    if(req.query.hasOwnProperty('status')){
+        if (req.query.status === 'active') {
+            active = true;
+        } else if (req.query.status === 'inactive') { 
+            active = false;
+        } else {
+            return resp.status(400).json({ message: 'invalid parameter' });
+        } 
+    }
+    conditions.active = active;
 
-//     if(req.query.hasOwnProperty('role')){
-//         conditions.role = req.query.role;
-//     }
-
-//     // const users = await User.find({ active: active }).select("-password");
-//     const users = await User.find(conditions).select("-password");
-//     return resp.status(200).json(users);
-// });
+    // const users = await User.find({ active: active }).select("-password");
+    const studies = await Studies.find(conditions);
+    return resp.status(200).json(studies);
+});
 
 // // GET USER BY ID
 // router.get('/:id', async (req, resp) => {
