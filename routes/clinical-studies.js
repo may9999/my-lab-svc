@@ -150,16 +150,15 @@ router.patch('/:id', async (req, resp) => {
             }  
         }
 
-        // create new clinical study
-        const clinical = new Studies({
+        const obj = {
             code: req.body.code,
             name: req.body.name,
             referenceValues: req.body.referenceValues,
             cost: req.body.cost,
             description: req.body.description,
             active: true
-        });
-        
+        }
+
         const updateStudy = await Studies.updateOne(
             { _id: req.params.id },
             { $set: obj }
