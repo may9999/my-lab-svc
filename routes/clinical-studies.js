@@ -71,16 +71,6 @@ router.get('', async (req, resp) => {
     return resp.status(200).json(studies);
 });
 
-// // GET USER BY ID
-// router.get('/:id', async (req, resp) => {
-//     try {
-//         const user = await User.findById(req.params.id).select("-password");
-//         return resp.status(200).json(user);
-//     } catch(err) {
-//         resp.json({ message: 'Invalid ID' });
-//     }
-// });
-
 // ENABLE - DISABLE A CLINICAL STUDY
 router.put('/activate/:id', async (req, resp) => {
     try {
