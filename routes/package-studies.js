@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const PackageStudies = require('../models/PackageStudies');
+const Studies = require('../models/ClinicalStudies');
 const User = require('../models/User');
 const { packageStudiesValidation } = require('../validation');
 
@@ -66,9 +67,35 @@ router.get('', async (req, resp) => {
     }
     conditions.active = active;
 
-    // const users = await User.find({ active: active }).select("-password");
-    const packages = await PackageStudies.find(conditions);
-    return resp.status(200).json(packages);
+    let packages = await PackageStudies.find(conditions);
+
+
+    // const ids =  [
+    //     '662971c08f81f21e2a5a6abe'
+    //     // '4ed3f117a844e0471100000d', 
+    //     // '4ed3f18132f50c491100000e',
+    // ];
+
+    // const packagesTest = await Studies.find().where('_id').in(ids).exec();
+    // const studyList: any;
+
+    const packagesResponse = [];
+    for (const pack of packages) {
+        const studies = await Studies.find().where('_id').in(pack.studies).exec(); 
+      
+        const obj = {
+            _id: pack._id,
+            code: pack.code,
+            name: pack.name,
+            cost: pack.cost,
+            studies: studies,
+            description: pack.description,
+            creationDate: pack.creationDate,
+        }
+        packagesResponse.push(obj);
+    };
+    
+    return resp.status(200).json(packagesResponse);
 });
 
 // // ENABLE - DISABLE A CLINICAL STUDY
