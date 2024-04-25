@@ -81,7 +81,7 @@ router.get('', async (req, resp) => {
 
     const packagesResponse = [];
     for (const pack of packages) {
-        const studies = await Studies.find().where('_id').in(pack.studies).exec(); 
+        const studies = await Studies.find({ active: true }).where('_id').in(pack.studies).exec(); 
       
         const obj = {
             _id: pack._id,
