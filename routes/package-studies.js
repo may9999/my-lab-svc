@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const PackageStudies = require('../models/PackageStudies');
 const User = require('../models/User');
-// const { clinicalStudiesValidation } = require('../validation');
+const { packageStudiesValidation } = require('../validation');
 
 router.post('/', async (req, resp) => {
     const currentUser = req.headers['current-user'];
@@ -21,11 +21,11 @@ router.post('/', async (req, resp) => {
     ///////////// FIN THIS BLOCQ MUST BE REUSABLE
     
 
-    // // Validate DATA before to be inserted in the DB
-    // const { error } = clinicalStudiesValidation(req.body);
-    // if (error) {
-    //     return resp.status(400).send({ message: error.details[0].message });
-    // }
+    // Validate DATA before to be inserted in the DB
+    const { error } = packageStudiesValidation(req.body);
+    if (error) {
+        return resp.status(400).send({ message: error.details[0].message });
+    }
 
     // Checking if the user is already in the DB
     const codeExist = await PackageStudies.findOne({ code: req.body.code });

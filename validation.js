@@ -62,7 +62,20 @@ const clinicalStudiesValidation = (data) => {
     return schema.validate(data);
 }
 
+// PACKAGE STUDIES VALIDATION
+const packageStudiesValidation = (data) => {
+    const schema = Joi.object({
+        code: Joi.string().required(),
+        name: Joi.string().required(),
+        cost: Joi.number().required(),
+        studies: Joi.array().required(),
+        description: Joi.optional()
+    });
+    return schema.validate(data);
+}
+
 module.exports.registerUserValidation = registerUserValidation;
 module.exports.registerClientValidation = registerClientValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.clinicalStudiesValidation = clinicalStudiesValidation;
+module.exports.packageStudiesValidation = packageStudiesValidation;
