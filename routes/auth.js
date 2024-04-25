@@ -86,7 +86,7 @@ router.post('/token', (req, res) => {
             return res.status(403).send('Access Denied'); // NO TOKEN
         }
         refreshTokens = refreshTokens.filter(token => token == refreshToken);
-        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
+        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3600s'});
         refreshTokens.push(accessToken);
         return res.json({ accessToken: accessToken });
     });
@@ -112,7 +112,7 @@ router.post('/token', (req, res) => {
 // });
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '120s'});
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3600s'});
 }
 
 router.post('/logout', (req, res, next) => {

@@ -18,7 +18,7 @@ module.exports = function (req, res, next) {
             return res.status(403).send('Invalid Token'); // NO TOKEN
         }
         refreshTokens = refreshTokens.filter(token => token == refreshToken);
-        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s'});
+        const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3600s'});
         refreshTokens.push(accessToken);
         req.user = user;
         next();
