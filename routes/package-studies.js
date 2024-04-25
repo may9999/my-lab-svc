@@ -51,25 +51,25 @@ router.post('/', async (req, resp) => {
     }
 });
 
-// // GET ALL CLINICAL STUDIES BY STATUS
-// router.get('', async (req, resp) => {
-//     let conditions = {};
-//     let active = true;
-//     if(req.query.hasOwnProperty('status')){
-//         if (req.query.status === 'active') {
-//             active = true;
-//         } else if (req.query.status === 'inactive') { 
-//             active = false;
-//         } else {
-//             return resp.status(400).json({ message: 'invalid parameter' });
-//         } 
-//     }
-//     conditions.active = active;
+// GET ALL PACKAGE STUDIES BY STATUS
+router.get('', async (req, resp) => {
+    let conditions = {};
+    let active = true;
+    if(req.query.hasOwnProperty('status')){
+        if (req.query.status === 'active') {
+            active = true;
+        } else if (req.query.status === 'inactive') { 
+            active = false;
+        } else {
+            return resp.status(400).json({ message: 'invalid parameter' });
+        } 
+    }
+    conditions.active = active;
 
-//     // const users = await User.find({ active: active }).select("-password");
-//     const studies = await Studies.find(conditions);
-//     return resp.status(200).json(studies);
-// });
+    // const users = await User.find({ active: active }).select("-password");
+    const packages = await PackageStudies.find(conditions);
+    return resp.status(200).json(packages);
+});
 
 // // ENABLE - DISABLE A CLINICAL STUDY
 // router.put('/activate/:id', async (req, resp) => {
